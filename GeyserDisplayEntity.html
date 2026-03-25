@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PackCrafter DisplayEntity Converter</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+
+<style>
+
+:root{
+  --orange:#ff7a00;
+  --orangeSoft:#fff3e8;
+  --bg:#f8f8f8;
+  --panel:#ffffff;
+  --text:#111;
+  --soft:#f3f3f3;
+}
+
+.dark{
+  --bg:#0e0e0e;
+  --panel:#161616;
+  --text:#f2f2f2;
+  --soft:#1f1f1f;
+  --orangeSoft:#2a1a0c;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter, Segoe UI, Arial;
+  transition:.25s;
+}
+
+.nav{
+  height:64px;
+  background:white;
+  border-bottom:1px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  position:sticky;
+  top:0;
+}
+
+.dark .nav{
+  background:#121212;
+  border-bottom:1px solid #222;
+}
+
+.brand{
+  font-size:20px;
+  font-weight:700;
+}
+
+.brand span{
+  color:var(--orange);
+}
+
+.navRight{
+  font-size:13px;
+  cursor:pointer;
+  opacity:.7;
+}
+
+.wrapper{
+  display:flex;
+  justify-content:center;
+  padding-top:40px;
+}
+
+.panel{
+  width:760px;
+  background:var(--panel);
+  border-radius:16px;
+  padding:38px;
+  box-shadow:0 25px 60px rgba(0,0,0,0.06);
+}
+
+.title{
+  font-size:26px;
+  font-weight:700;
+}
+
+.subtitle{
+  margin-top:6px;
+  font-size:14px;
+  opacity:.65;
+}
+
+.drop{
+  margin-top:26px;
+  border:2px dashed #ddd;
+  background:var(--orangeSoft);
+  padding:55px;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.25s;
+  text-align:center;
+  font-size:15px;
+}
+
+.drop:hover{
+  border-color:var(--orange);
+  box-shadow:0 0 0 4px rgba(255,122,0,0.12);
+}
+
+.actions{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+}
+
+button{
+  background:var(--orange);
+  color:white;
+  border:none;
+  padding:13px 24px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:15px;
+  transition:.2s;
+}
+
+button:hover{
+  box-shadow:0 6px 18px rgba(255,122,0,0.35);
+  transform:translateY(-1px);
+}
+
+#mergeRedirect{
+  background:black;
+}
+
+#mergeRedirect:hover{
+  box-shadow:0 6px 22px rgba(0,0,0,0.45);
+}
+
+.console{
+  margin-top:28px;
+  background:var(--soft);
+  border-radius:12px;
+  padding:18px;
+  height:280px;
+  overflow:auto;
+  font-family:ui-monospace, monospace;
+  font-size:13px;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+
+.footer{
+  margin-top:22px;
+  font-size:12px;
+  opacity:.7;
+}
+
+.links a{
+  margin-right:14px;
+  text-decoration:none;
+  color:var(--orange);
+  font-weight:600;
+}
+
+input{ display:none; }
+
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+<div class="brand">Pack<span>Crafter</span></div>
+<div class="navRight" onclick="toggleMode()">Light / Dark</div>
+</div>
+
+<div class="wrapper">
+<div class="panel">
+
+<div class="title">GeyserDisplayEntity Mapping Converter</div>
+<div class="subtitle">
+Convert Nexo furniture YAML into separate Display Entity mapping files
+</div>
+
+<div class="drop" id="drop">
+Drop ZIP here or click to upload
+</div>
+
+<input type="file" id="fileInput" accept=".zip">
+
+<div class="actions">
+<button id="downloadZip" style="display:none;">Download Mapping ZIP</button>
+<button id="mergeRedirect">Open Mapping Merger</button>
+</div>
+
+<div class="console" id="log"></div>
+
+<div class="footer">
+Created by Phoenix  
+<div class="links">
+<a href="mailto:mahivai322@gmail.com">Email</a>
+<a href="https://discord.gg/nXBjFWmCSc" target="_blank">Discord</a>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+const drop = document.getElementById("drop");
+const input = document.getElementById("fileInput");
+const log = document.getElementById("log");
+const downloadBtn = document.getElementById("downloadZip");
+
+let outputZip;
+
+drop.onclick = ()=> input.click();
+drop.addEventListener("dragover", e=> e.preventDefault());
+drop.addEventListener("drop", e=>{
+  e.preventDefault();
+  processZip(e.dataTransfer.files[0]);
+});
+
+input.addEventListener("change", e=>{
+  processZip(e.target.files[0]);
+});
+
+async function processZip(file){
+
+log.textContent = "Reading zip...\n";
+outputZip = new JSZip();
+
+const zip = await JSZip.loadAsync(file);
+let count = 0;
+
+for(const path in zip.files){
+
+if(!path.endsWith(".yml") && !path.endsWith(".yaml")) continue;
+
+const text = await zip.files[path].async("string");
+
+let data;
+try{ data = jsyaml.load(text); }
+catch{
+log.textContent += "YAML error: "+path+"\n";
+continue;
+}
+
+for(const key in data){
+
+const item = data[key];
+if(!item.material) continue;
+if(!item.Pack || !item.Pack.custom_model_data) continue;
+
+const mat = "minecraft:"+item.material.toLowerCase();
+const cmd = item.Pack.custom_model_data;
+
+const yaml =
+`mappings:
+  ${key}:
+    type: "${mat}"
+    model-data: ${cmd}
+    item-identifier: "none"
+    displayentityoptions:
+      y-offset: -0.5
+      vanilla-scale: false
+      vanilla-scale-multiplier: 1
+      hand: false
+`;
+
+outputZip.file(key+".yml", yaml);
+count++;
+
+log.textContent += "Generated → "+key+".yml\n";
+
+}
+
+}
+
+log.textContent += "\nTotal mappings: "+count;
+downloadBtn.style.display="inline-block";
+
+}
+
+downloadBtn.onclick = async ()=>{
+const blob = await outputZip.generateAsync({type:"blob"});
+const a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = "display_entity_mappings.zip";
+a.click();
+}
+
+document.getElementById("mergeRedirect").onclick = ()=>{
+  window.open("https://iamthevision.github.io/geyser-mapping-merger/","_blank");
+}
+
+function toggleMode(){
+document.body.classList.toggle("dark");
+}
+
+</script>
+
+</body>
+</html>
