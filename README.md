@@ -1,7 +1,6 @@
-# GeyserDisplayEntryConverter
 <div align="center">
 
-# 🧩 PackCrafter — GeyserDisplayEntity Converter
+# 🧩 PackCrafter GeyserDisplayEntity Converter
 
 ### ⚡ Convert Nexo Furniture YAML → Display Entity Mapping YAML instantly
 
@@ -10,8 +9,6 @@
 [![License](https://img.shields.io/badge/use-client%20utility-blue)]()
 
 </div>
-
----
 
 ## ✨ Overview
 
