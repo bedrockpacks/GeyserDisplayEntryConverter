@@ -22,19 +22,15 @@ It helps server owners and pack developers speed up large furniture pack workflo
 
 ---
 
-## 🚀 Key Features
+## 🚀 Features
 
-✔ Drag & drop ZIP upload  
-✔ Click-to-upload support  
-✔ Generates **one mapping per furniture item**  
-✔ Automatic namespace material conversion  
-✔ Bulk ZIP export of mappings  
-✔ Skipped entry detection system  
-✔ Live mapping counter  
-✔ Dark mode with memory  
-✔ Smooth cursor glow interaction  
-✔ Modern SaaS-style UI  
-✔ Direct shortcut to Mapping Merge tool  
+✔ Drag & drop or upload ZIP  
+✔ Generates separate mapping file for each furniture item  
+✔ Automatically converts material to Minecraft namespace format  
+✔ Bulk download all mappings as ZIP  
+✔ Skips invalid entries (missing material or custom model data)  
+✔ Clean modern UI with dark mode support  
+✔ Quick access button to Mapping Merge tool  
 
 ---
 
