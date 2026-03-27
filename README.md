@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🧩 PackCrafter GeyserDisplayEntity Converter
+# 🧩 PackCrafter GeyserDisplayEntity Mapping Converter
 
-### ⚡ Convert Nexo Furniture YAML → Display Entity Mapping YAML instantly
+### ⚡ Convert Nexo Furniture YAML Display Entity Mapping YAML instantly
 
 [![Status](https://img.shields.io/badge/status-stable-orange)]()
 [![Platform](https://img.shields.io/badge/platform-browser-lightgrey)]()
@@ -25,8 +25,6 @@ It helps server owners and pack developers speed up large furniture pack workflo
 
 ✔ Drag & drop or upload ZIP  
 ✔ Generates separate mapping file for each furniture item  
-✔ Automatically converts material to Minecraft namespace format  
-✔ Bulk download all mappings as ZIP  
 ✔ Skips invalid entries (missing material or custom model data)  
 ✔ Clean modern UI with dark mode support  
 ✔ Quick access button to Mapping Merge tool  
