@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧩 PackCrafter GeyserDisplayEntity Mapping Converter
+# 🧩 GeyserDisplayEntity Mapping Converter
 
 ### ⚡ Convert Nexo Furniture YAML Display Entity Mapping YAML instantly
 
